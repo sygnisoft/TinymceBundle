@@ -4,13 +4,15 @@ namespace Stfalcon\Bundle\TinymceBundle\Twig\Extension;
 use Stfalcon\Bundle\TinymceBundle\Helper\LocaleHelper;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Twig Extension for TinyMce support.
  *
  * @author naydav <web@naydav.com>
  */
-class StfalconTinymceExtension extends \Twig_Extension
+class StfalconTinymceExtension extends AbstractExtension
 {
     /**
      * @var ContainerInterface $container Container interface
@@ -74,7 +76,7 @@ class StfalconTinymceExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'tinymce_init' => new \Twig_SimpleFunction(
+            'tinymce_init' => new TwigFunction(
                 'tinymce_init',
                 array($this, 'tinymceInit'),
                 array('is_safe' => array('html'))
