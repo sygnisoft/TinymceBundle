@@ -1,6 +1,6 @@
 # TinymceBundle
 
-This bundle makes it very easy to add the TinyMCE WYSIWYG editor to your Symfony2 project.
+:package: This bundle makes it very easy to add the TinyMCE WYSIWYG editor to your Symfony2 project.
 
 ## Installation
 
@@ -8,7 +8,8 @@ This bundle makes it very easy to add the TinyMCE WYSIWYG editor to your Symfony
 
 | Bundle Version (X.Y) | PHP     | Symfony            | Comment                                  |
 |:--------------------:|:-------:|:------------------:|------------------------------------------|
-| 2.3                  | >= 7.1  | >= 3.4             | Actual version                           |
+| 3.0                  | >= 7.2  | >= 5.0             | Actual version                           |
+| 2.4                  | >= 7.1  | >= 3.4 and 4.*     |                                          |
 | 2.0                  | >= 5.4  | >= 3.0             |                                          |
 | 1.0                  | >= 5.4  | >= 2.1 and <= 2.8  |                                          |
 
@@ -129,6 +130,35 @@ In the example we set default language from the parameters.ini. Of course you ca
 
 If language parameter isn't set, the default language will be get from the session.
 
+## Multiply selector
+
+You can specify one or many selectors for editor placement.
+
+```yaml
+    // app/config/config.yml
+    stfalcon_tinymce:
+        selector: ".tinymce"
+```
+
+or 
+
+```yaml
+    // app/config/config.yml
+    stfalcon_tinymce:
+        selector: 
+            - ".tinymce"
+            - "#tinymce"
+```
+
+or
+
+```yaml
+    // app/config/config.yml
+    stfalcon_tinymce:
+        selector: [".tinymce", "#tinymce"]
+```
+
+
 ## Custom configurations
 
 According to the TinyMCE documentation you can configure your editor as you wish. Below is an almost full list of available parameters that you can configure by yourself:
@@ -138,7 +168,10 @@ According to the TinyMCE documentation you can configure your editor as you wish
     stfalcon_tinymce:
         include_jquery: true
         tinymce_jquery: true
-        selector: ".tinymce"
+        selector:
+            - ".tinymce"
+            - "#editor1"
+            - "#editor2"
         base_url: "http://yourdomain.com/" # this parameter may be included if you need to override the assets_base_urls for your template engine (to override a CDN base url)
         # Get current language from the parameters.ini
         language: %locale%

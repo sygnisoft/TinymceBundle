@@ -1,4 +1,5 @@
 <?php
+
 namespace Stfalcon\Bundle\TinymceBundle\Twig\Extension;
 
 use Stfalcon\Bundle\TinymceBundle\Helper\LocaleHelper;
@@ -8,23 +9,23 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
- * Twig Extension for TinyMce support.
+ * StfalconTinymceExtension.
  *
  * @author naydav <web@naydav.com>
  */
 class StfalconTinymceExtension extends AbstractExtension
 {
     /**
-     * @var ContainerInterface $container Container interface
+     * @var ContainerInterface $container
      */
     protected $container;
 
     /**
-     * Asset Base Url
+     * Asset Base Url.
      *
      * Used to over ride the asset base url (to not use CDN for instance)
      *
-     * @var String
+     * @var string
      */
     protected $baseUrl;
 
@@ -34,9 +35,8 @@ class StfalconTinymceExtension extends AbstractExtension
     private $packages;
 
     /**
-     * Initialize tinymce helper
-     *
      * @param ContainerInterface $container
+     * @param Packages           $packages
      */
     public function __construct(ContainerInterface $container, Packages $packages)
     {
@@ -45,8 +45,6 @@ class StfalconTinymceExtension extends AbstractExtension
     }
 
     /**
-     * Gets a service.
-     *
      * @param string $id The service identifier
      *
      * @return object The associated service
@@ -57,7 +55,7 @@ class StfalconTinymceExtension extends AbstractExtension
     }
 
     /**
-     * Get parameters from the service container
+     * Get parameters from the service container.
      *
      * @param string $name
      *
@@ -73,15 +71,15 @@ class StfalconTinymceExtension extends AbstractExtension
      *
      * @return array An array of functions
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
-        return array(
+        return [
             'tinymce_init' => new TwigFunction(
                 'tinymce_init',
-                array($this, 'tinymceInit'),
-                array('is_safe' => array('html'))
+                [$this, 'tinymceInit'],
+                ['is_safe' => ['html']]
             ),
-        );
+        ];
     }
 
     /**
@@ -91,15 +89,15 @@ class StfalconTinymceExtension extends AbstractExtension
      *
      * @return string
      */
-    public function tinymceInit($options = array())
+    public function tinymceInit($options = []): string
     {
         $config = $this->getParameter('stfalcon_tinymce.config');
         $config = array_merge_recursive($config, $options);
 
-        $this->baseUrl = (!isset($config['base_url']) ? null : $config['base_url']);
+        $this->baseUrl = $config['base_url'] ?? null;
 
         // Asset package name
-        $assetPackageName = (!isset($config['asset_package_name']) ? null : $config['asset_package_name']);
+        $assetPackageName = $config['asset_package_name'] ?? null;
         unset($config['asset_package_name']);
 
         /** @var $assets \Symfony\Component\Templating\Helper\CoreAssetsHelper */
@@ -161,7 +159,7 @@ class StfalconTinymceExtension extends AbstractExtension
                 if (isset($themeOptions['content_css'])) {
                     // As there may be multiple CSS Files specified we need to parse each of them individually
                     $cssFiles = $themeOptions['content_css'];
-                    if (!is_array($themeOptions['content_css'])) {
+                    if (!\is_array($themeOptions['content_css'])) {
                         $cssFiles = explode(',', $themeOptions['content_css']);
                     }
 
@@ -175,27 +173,30 @@ class StfalconTinymceExtension extends AbstractExtension
             }
         }
 
-        $tinymceConfiguration = preg_replace(
-            array(
+        $tinymceConfiguration = \preg_replace(
+            [
                 '/"file_browser_callback":"([^"]+)"\s*/',
                 '/"file_picker_callback":"([^"]+)"\s*/',
                 '/"paste_preprocess":"([^"]+)"\s*/',
-            ),
-            array(
+            ],
+            [
                 'file_browser_callback:$1',
                 'file_picker_callback:$1',
                 '"paste_preprocess":$1',
-            ),
-            json_encode($config)
+            ],
+            \json_encode($config)
         );
 
-        return $this->getService('twig')->render('@StfalconTinymce/Script/init.html.twig', array(
-            'tinymce_config'     => $tinymceConfiguration,
-            'include_jquery'     => $config['include_jquery'],
-            'tinymce_jquery'     => $config['tinymce_jquery'],
-            'asset_package_name' => $assetPackageName,
-            'base_url'           => $this->baseUrl,
-        ));
+        return $this->getService('twig')->render(
+            '@StfalconTinymce/Script/init.html.twig',
+            [
+                'tinymce_config' => $tinymceConfiguration,
+                'include_jquery' => $config['include_jquery'],
+                'tinymce_jquery' => $config['tinymce_jquery'],
+                'asset_package_name' => $assetPackageName,
+                'base_url' => $this->baseUrl,
+            ]
+        );
     }
 
     /**
@@ -203,7 +204,7 @@ class StfalconTinymceExtension extends AbstractExtension
      *
      * @return string The extension name
      */
-    public function getName()
+    public function getName(): string
     {
         return 'stfalcon_tinymce';
     }
@@ -215,7 +216,7 @@ class StfalconTinymceExtension extends AbstractExtension
      *
      * @return string
      */
-    protected function getAssetsUrl($inputUrl)
+    protected function getAssetsUrl(string $inputUrl): string
     {
         $assets = $this->packages;
 

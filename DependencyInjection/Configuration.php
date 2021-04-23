@@ -6,7 +6,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * TinymceBundle configuration structure.
+ * Configuration.
  */
 class Configuration implements ConfigurationInterface
 {
@@ -15,7 +15,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return TreeBuilder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $defaults = $this->getTinymceDefaults();
 
@@ -31,7 +31,13 @@ class Configuration implements ConfigurationInterface
                     // Set init to true to use callback on the event init
                     ->booleanNode('use_callback_tinymce_init')->defaultFalse()->end()
                     // Selector
-                    ->scalarNode('selector')->defaultValue('.tinymce')->end()
+                    ->arrayNode('selector')
+                        ->prototype('scalar')->end()
+                        ->beforeNormalization()
+                            ->ifString()
+                            ->then(function ($value) { return [$value]; })
+                        ->end()
+                    ->end()
                     // base url for content
                     ->scalarNode('base_url')->end()
                     // asset packageName
@@ -79,23 +85,23 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    private function getTinymceDefaults()
+    private function getTinymceDefaults(): array
     {
-        return array(
-            'advanced' => array(
-                "theme"        => "modern",
-                "plugins"      => array(
-                    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                    "searchreplace wordcount visualblocks visualchars code fullscreen",
-                    "insertdatetime media nonbreaking save table contextmenu directionality",
-                    "emoticons template paste textcolor",
-                ),
-                "toolbar1"     => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify
-                                   | bullist numlist outdent indent | link image",
-                "toolbar2"     => "print preview media | forecolor backcolor emoticons",
-                "image_advtab" => true,
-            ),
-            'simple'   => array(),
-        );
+        return [
+            'advanced' => [
+                'theme' => 'modern',
+                'plugins' => [
+                    'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                    'searchreplace wordcount visualblocks visualchars code fullscreen',
+                    'insertdatetime media nonbreaking save table contextmenu directionality',
+                    'emoticons template paste textcolor',
+                ],
+                'toolbar1' => 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify
+                                   | bullist numlist outdent indent | link image',
+                'toolbar2' => 'print preview media | forecolor backcolor emoticons',
+                'image_advtab' => true,
+            ],
+            'simple' => [],
+        ];
     }
 }
